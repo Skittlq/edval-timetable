@@ -7,6 +7,10 @@ import configparser
 import os
 import requests
 from packaging import version
+import shutil
+import subprocess
+import sys
+import tempfile
 
 # Define config_file path globally
 config_file = os.path.join(os.environ['APPDATA'], 'Edval Timetable', 'config.ini')
@@ -252,6 +256,27 @@ def get_latest_release_info():
         print(f"Error checking for updates: {e}")
         return None
 
+def download_file(url, local_filename):
+    with requests.get(url, stream=True) as r:
+        with open(local_filename, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+    return local_filename
+
+def apply_update(download_url):
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        print(f"Downloading update from {download_url}")
+        downloaded_file_path = download_file(download_url, os.path.join(tmpdirname, 'timetable.exe'))
+        current_executable_path = sys.executable
+        
+        print("Applying update...")
+        # Replace the old executable with the new one
+        shutil.copyfile(downloaded_file_path, current_executable_path)
+        
+        # Restart the application
+        print("Restarting application...")
+        subprocess.Popen([current_executable_path] + sys.argv[1:])
+        sys.exit()
+
 def check_for_updates(current_version):
     latest_release = get_latest_release_info()
     if latest_release:
@@ -259,16 +284,20 @@ def check_for_updates(current_version):
         latest_version = version.parse(latest_version_tag)
         if latest_version > version.parse(current_version):
             print(f"New version available: {latest_version}")
-            # Here you can add functionality to download and apply the update
-            # For now, we'll just print the download URL
-            download_url = latest_release['assets'][0]['browser_download_url']
-            print(f"Download the update here: {download_url}")
-            # You could also automate the download and application of the update here
+            download_url = ""
+            for asset in latest_release['assets']:
+                if asset['name'] == "timetable.exe":
+                    download_url = asset['browser_download_url']
+                    break
+            if download_url:
+                apply_update(download_url)
+            else:
+                print("No executable found for the update.")
         else:
             print("You have the latest version.")
 
 if __name__ == '__main__':
-    CURRENT_VERSION = "1.1.0"  # Replace with the current version of your app
+    CURRENT_VERSION = "1.2.0"  # Replace with the current version of your app
     check_for_updates(CURRENT_VERSION)
     os.system('cls' if os.name == 'nt' else 'clear')
     day_offset = 0  # Start with today's timetable
