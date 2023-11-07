@@ -303,10 +303,10 @@ def check_for_updates(current_version):
             print("You have the latest version.")
 
 if __name__ == '__main__':
-    CURRENT_VERSION = "1.2.2"  # Replace with the current version of your app
+    CURRENT_VERSION = "1.2.3"  # Replace with the current version of your app
     check_for_updates(CURRENT_VERSION)
     os.system('cls' if os.name == 'nt' else 'clear')
-    # print("Edval Timetable ", CURRENT_VERSION)
+    print("Edval Timetable ", CURRENT_VERSION)
     day_offset = 0  # Start with today's timetable
     change_webcode = False
     while True:
