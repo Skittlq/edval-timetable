@@ -1,4 +1,3 @@
-import ctypes
 import requests
 from tabulate import tabulate
 from termcolor import colored
@@ -245,80 +244,8 @@ def perform_action(action, current_offset):
         return current_offset - 1, False  # Decrement offset by 1, do not change webcode
     return current_offset, False  # No action, retain current offset, do not change webcode
 
-def get_latest_release_info():
-    # URL of the latest release in GitHub API
-    url = "https://api.github.com/repos/Skittlq/edval-timetable/releases/latest"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        latest_release = response.json()
-        return latest_release
-    except requests.RequestException as e:
-        print(f"Error checking for updates: {e}")
-        return None
-
-def download_file(url, local_filename):
-    with requests.get(url, stream=True) as r:
-        with open(local_filename, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)
-    return local_filename
-
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-def apply_update(download_url):
-    if is_admin():
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            print(f"Downloading update from {download_url}")
-            downloaded_file_path = download_file(download_url, os.path.join(tmpdirname, 'timetable.exe'))
-            
-            # Direct path to the installed timetable.exe
-            current_executable_path = r"C:\Program Files (x86)\Edval Timetable\timetable.exe"
-            
-            print("Applying update...")
-            try:
-                # Replace the old executable with the new one
-                shutil.copyfile(downloaded_file_path, current_executable_path)
-                
-                # Restart the application
-                print("Restarting application...")
-                subprocess.Popen([current_executable_path] + sys.argv[1:])
-                sys.exit()
-            except PermissionError as e:
-                print(f"Failed to apply update due to permissions issue: {e}")
-                # Handle the permission error (e.g., prompt the user to run as administrator or check permissions)
-        pass
-    else:
-        # Re-launch the program with admin rights
-        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
-
-def check_for_updates(current_version):
-    latest_release = get_latest_release_info()
-    if latest_release:
-        latest_version_tag = latest_release['tag_name']
-        latest_version = version.parse(latest_version_tag)
-        if latest_version > version.parse(current_version):
-            print(f"New version available: {latest_version}")
-            download_url = ""
-            for asset in latest_release['assets']:
-                if asset['name'] == "timetable.exe":
-                    download_url = asset['browser_download_url']
-                    break
-            if download_url:
-                apply_update(download_url)
-            else:
-                print("No executable found for the update.")
-        else:
-            print("You have the latest version.")
-
 if __name__ == '__main__':
-    CURRENT_VERSION = "1.2.5"  # Replace with the current version of your app
-    check_for_updates(CURRENT_VERSION)
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("Edval Timetable ", CURRENT_VERSION)
     day_offset = 0  # Start with today's timetable
     change_webcode = False
     while True:
