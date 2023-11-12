@@ -1,4 +1,4 @@
-# Edval Timetable Fetcher
+# Edval Timetable
 
 ## Description
 Edval Timetable is a Python application designed to seamlessly retrieve your daily timetable from Edval using your unique Edval webcode. Simplify your school day planning with an easy-to-use interface and convenient commands.
