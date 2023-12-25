@@ -83,7 +83,7 @@ def print_timetable(day_offset=0):
         webcode = get_webcode()  # Get the webcode from the config file or user input
 
         # Login and get tokens
-        login_data = {"webCode": webcode, "rememberMe": False}  # Use the webcode here
+        login_data = {"webCode": webcode, "rememberMe": False}
         login_response = requests.post(
             "https://my.edval.education/api/auth/login",
             json=login_data
@@ -122,6 +122,12 @@ def print_timetable(day_offset=0):
         )
         fetchTT_response.raise_for_status()  # Check for errors
         fetchTT_data = fetchTT_response.json()
+
+        # Check if timetable data is empty or has empty items
+        if not fetchTT_data['data'] or (fetchTT_data['data'][0]['timetables'] and not fetchTT_data['data'][0]['timetables'][0]['items']):
+            table_output = tabulate([["No Data Available"], [formatted_date]], headers='firstrow', tablefmt='fancy_grid', stralign='center')
+            print(table_output)
+            return day_offset
 
         def hex_to_rgb(value):
             value = value.lstrip('#')
