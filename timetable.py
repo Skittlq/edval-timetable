@@ -17,12 +17,6 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 config = configparser.ConfigParser()
 
-# Removed the re-definition of config_file
-if not os.path.exists(config_file):
-    config['Setup'] = {'LibrariesInstalled': 'False'}
-    with open(config_file, 'w') as f:
-        config.write(f)
-
 config.read(config_file)
 
 def get_webcode():
