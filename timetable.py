@@ -15,12 +15,6 @@ if not os.path.exists(os.path.dirname(config_file)):
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-def install_libraries():
-    print("Installing dependencies...")
-    os.system('pip install requests tabulate termcolor pytz configparser')
-    os.system('cls')
-    print("Dependencies Installed!")
-
 config = configparser.ConfigParser()
 
 # Removed the re-definition of config_file
@@ -30,13 +24,6 @@ if not os.path.exists(config_file):
         config.write(f)
 
 config.read(config_file)
-
-if config['Setup'].getboolean('LibrariesInstalled') == False:
-    install_libraries()
-    config['Setup']['LibrariesInstalled'] = 'True'
-    with open(config_file, 'w') as f:
-        config.write(f)
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 def get_webcode():
 
