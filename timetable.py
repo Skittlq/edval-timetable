@@ -1,16 +1,11 @@
+import readchar
 import requests
 from tabulate import tabulate
-from termcolor import colored
 from datetime import datetime, timedelta
 import pytz
 import configparser
 import os
 import requests
-from packaging import version
-import shutil
-import subprocess
-import sys
-import tempfile
 
 # Define config_file path globally
 config_file = os.path.join(os.environ['APPDATA'], 'Edval Timetable', 'config.ini')
@@ -219,28 +214,37 @@ def print_timetable(day_offset=0):
         print(f"Error: {e}")
 
 def prompt_user_action():
-    print("\nOptions:")
-    print("[Enter] to exit.")
-    print("'change' to change your Edval webcode.")
-    print("'today' to view today's timetable.")
-    print("'next' to view the next day's timetable.")
-    print("'prev' to view the previous day's timetable.")
-    user_input = input("What would you like to do? ")
-    return user_input.lower().strip()
+    menu_options = [
+        ["[ENTER] / [ESC] - Exit\n[LEFT ARROW] / [RIGHT ARROW] - Cycle through days\n[UP ARROW] - Return to the current day\n[DELETE] - Change your Edval webcode"]
+    ]
+    menu_table = tabulate(menu_options, headers=["NAVIGATION"], tablefmt="fancy_grid", colalign=("center",))
+    print("\n" + menu_table)
+    user_input = readchar.readkey()
+
+    key_actions = {
+        readchar.key.ENTER: 'exit',
+        readchar.key.ESC: 'exit',
+        readchar.key.UP: 'today',
+        readchar.key.RIGHT: 'next',
+        readchar.key.LEFT: 'prev',
+        readchar.key.DELETE: 'change'
+    }
+
+    return key_actions.get(user_input, '')
 
 def perform_action(action, current_offset):
-    if action == 'change':
+    if action == 'change' or action == 'c':
         if os.path.exists(config_file):
             os.remove(config_file)
         return 0, True  # Reset to today's timetable, change webcode
-    elif action == 'today':
+    elif action == 'today' or action == 't':
         return 0, False  # Reset to today's timetable, do not change webcode
-    elif action == 'next':
+    elif action == 'next' or action == 'n':
         # If the current day is Friday, add 3 to skip the weekend
         if (datetime.now() + timedelta(days=current_offset)).weekday() == 4:
             return current_offset + 3, False
         return current_offset + 1, False  # Increment offset by 1, do not change webcode
-    elif action == 'prev':
+    elif action == 'prev' or action == 'p':
         # If the current day is Monday, subtract 3 to go back to Friday
         if (datetime.now() + timedelta(days=current_offset)).weekday() == 0:
             return current_offset - 3, False
@@ -258,7 +262,7 @@ if __name__ == '__main__':
         # Save the returned day_offset from print_timetable to a variable
         new_day_offset = print_timetable(day_offset)
         action = prompt_user_action()
-        if action == '':
+        if action == 'exit':
             break  # Exit the program
         # Update day_offset based on the action, while keeping track of the change_webcode flag
         day_offset, change_webcode = perform_action(action, new_day_offset)
