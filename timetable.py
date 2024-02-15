@@ -47,17 +47,15 @@ def get_webcode():
             "https://my.edval.education/api/auth/login",
             json=login_data
         )
-        return login_response.status_code == 200  # Returns True if status code is 200 (OK)
+        return login_response  # Returns True if status code is 200 (OK)
 
     if not os.path.exists(config_file) or not config.has_section('Credentials'):
+        os.system('cls' if os.name == 'nt' else 'clear')
         while True:
-            os.system('cls' if os.name == 'nt' else 'clear')
             webcode = input('Enter your Edval webcode: ')
-            if validate_webcode(webcode):  # Removed the re.match condition
-                break
-            else:
-                os.system('cls' if os.name == 'nt' else 'clear')
-                print("Invalid webcode. Please enter a valid webcode.")  # Updated error message
+            response = validate_webcode(webcode)
+            break
+                
         config['Credentials'] = {'webCode': webcode}
         with open(config_file, 'w') as f:  # Use config_file variable here
             config.write(f)
@@ -65,11 +63,6 @@ def get_webcode():
     else:
         config.read(config_file)  # Use config_file variable here
         webcode = config['Credentials']['webCode']
-
-        # Validate the stored webcode, prompt for new if invalid
-        if not validate_webcode(webcode):
-            print("Stored webcode is invalid, please enter a new webcode.")
-            return get_webcode()  # Recursion to prompt for a new webcode
 
     return webcode
 
@@ -210,8 +203,18 @@ def print_timetable(day_offset=0):
         # At the end of the print_timetable function, before the except block:
         return day_offset
     
-    except requests.RequestException as e:
-        print(f"Error: {e}")
+    except requests.RequestException as e:        
+        if login_response.status_code == 401 and "Invalid WebCode" in login_response.json().get('body', {}):
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("Invalid WebCode. Change your WebCode by pressing [DELETE].")  # Updated error message
+            return
+        elif login_response.status_code == 401:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("An error occurred while logging into Edval's services, please try again later.")  # Updated error message
+        else:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(f"An Error Occured: {e}")  # Updated error message
+
 
 def prompt_user_action():
     menu_options = [
@@ -225,8 +228,8 @@ def prompt_user_action():
         readchar.key.ENTER: 'exit',
         readchar.key.ESC: 'exit',
         readchar.key.UP: 'today',
-        readchar.key.RIGHT: 'next',
-        readchar.key.LEFT: 'prev',
+        readchar.key.RIGHT: 'n',
+        readchar.key.LEFT: 'p',
         readchar.key.DELETE: 'change'
     }
 
@@ -239,18 +242,28 @@ def perform_action(action, current_offset):
         return 0, True  # Reset to today's timetable, change webcode
     elif action == 'today' or action == 't':
         return 0, False  # Reset to today's timetable, do not change webcode
-    elif action == 'next' or action == 'n':
+    elif action == 'n':
         # If the current day is Friday, add 3 to skip the weekend
         if (datetime.now() + timedelta(days=current_offset)).weekday() == 4:
             return current_offset + 3, False
         return current_offset + 1, False  # Increment offset by 1, do not change webcode
-    elif action == 'prev' or action == 'p':
+    elif action == 'nn':
+        # If the current day is Friday, add 3 to skip the weekend
+        if (datetime.now() + timedelta(days=current_offset)).weekday() == 4:
+            return current_offset + 7, False
+        return current_offset + 7, False  # Increment offset by 1, do not change webcode
+    elif action == 'p':
         # If the current day is Monday, subtract 3 to go back to Friday
         if (datetime.now() + timedelta(days=current_offset)).weekday() == 0:
             return current_offset - 3, False
         # If the current day is Sunday, subtract 2 to go back to Friday
         elif (datetime.now() + timedelta(days=current_offset)).weekday() == 6:
             return current_offset - 2, False
+        return current_offset - 1, False  # Decrement offset by 1, do not change webcode
+    elif action == 'pp':
+        # If the current day is Monday, subtract 3 to go back to Friday
+        if (datetime.now() + timedelta(days=current_offset)).weekday() == 0:
+            return current_offset - 7, False
         return current_offset - 1, False  # Decrement offset by 1, do not change webcode
     return current_offset, False  # No action, retain current offset, do not change webcode
 
