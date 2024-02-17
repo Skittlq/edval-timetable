@@ -19,11 +19,7 @@ Edval Timetable is a Python application designed to seamlessly retrieve your dai
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Skittlq/edval-timetable.git
-   ```
-2. Navigate to the cloned directory and run the application. On first launch, it will automatically install necessary Python libraries.
+1. [Download](https://github.com/Skittlq/edval-timetable/releases/latest) and run the installer from the repositories releases section.
 
 ## Usage
 
