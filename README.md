@@ -2,7 +2,7 @@
 
 ## Description
 
-Edval Timetable is a Python application designed to seamlessly retrieve your daily timetable from Edval using your unique Edval webcode. Simplify your school day planning with an easy-to-use interface and convenient keyboard navigation.
+Edval Timetable is a Python CLI application designed to seamlessly retrieve your daily timetable from Edval using your unique Edval webcode. Simplify your school day planning with an easy-to-use interface and convenient keyboard navigation.
 
 ## Features
 
@@ -23,19 +23,17 @@ Edval Timetable is a Python application designed to seamlessly retrieve your dai
 
 ## Usage
 
-Run the application and enter your Edval webcode when prompted. Use the arrow keys to navigate through your timetable and other specified keys to interact with the application:
+Run the application or type in the "edval" command in your terminal of choice and enter your Edval webcode when prompted (This will be saved). Use the arrow keys to navigate through your timetable and other specified keys to interact with the application:
 
-- `[RIGHT ARROW]`: Next day
-- `[LEFT ARROW]`: Previous day
-- `[UP ARROW]`: Current day
+- `[RIGHT ARROW]`: Jump to Next day
+- `[LEFT ARROW]`: Jump to Previous day
+- `[UP ARROW]`: Jump to Current day
 - `[DELETE]`: Change webcode
 - `[ENTER]` / `[ESC]`: Exit
 
-The interface will only respond to these specific key presses, ensuring that your interaction is intentional and error-free.
-
 ## Note on Compatibility
 
-Please note that this application is developed and tested on Unix-like and Windows operating systems. While it may work on other systems, such functionality is not guaranteed, and support for issues arising on non-supported platforms may be limited.
+Please note that this application is developed and tested exclusively for Windows operating systems. It will not run on Linux, macOS, or any mobile operating systems.
 
 ## License
 
