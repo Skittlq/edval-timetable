@@ -1,3 +1,4 @@
+import webbrowser
 import readchar
 import requests
 from tabulate import tabulate
@@ -199,7 +200,7 @@ def print_timetable(day_offset=0):
 
 def prompt_user_action():
     menu_options = [
-        ["[ENTER] / [ESC] - Exit\n[LEFT ARROW] / [RIGHT ARROW] - Cycle through days\n[UP ARROW] - Return to the current day\n[DELETE] - Change your Edval webcode"]
+        ["[ENTER] / [ESC] - Exit\n[LEFT ARROW] / [RIGHT ARROW] - Cycle through days\n[UP ARROW] - Return to the current day\n[DELETE] - Change your Edval webcode\n\n[DOWN ARROW] - Open GitHub Repository"]
     ]
     menu_table = tabulate(menu_options, headers=["NAVIGATION"], tablefmt="fancy_grid", colalign=("center",))
     print("\n" + menu_table)
@@ -209,6 +210,7 @@ def prompt_user_action():
         readchar.key.ENTER: 'exit',
         readchar.key.ESC: 'exit',
         readchar.key.UP: 'today',
+        readchar.key.DOWN: 'download',
         readchar.key.RIGHT: 'n',
         readchar.key.LEFT: 'p',
         readchar.key.DELETE: 'change'
@@ -246,6 +248,9 @@ def perform_action(action, current_offset):
         if (datetime.now() + timedelta(days=current_offset)).weekday() == 0:
             return current_offset - 7, False
         return current_offset - 1, False  # Decrement offset by 1, do not change webcode
+    elif action == 'download':
+        url = "https://github.com/Skittlq/edval-timetable/releases/latest"
+        webbrowser.open(url, new=0, autoraise=True)
     return current_offset, False  # No action, retain current offset, do not change webcode
 
 if __name__ == '__main__':

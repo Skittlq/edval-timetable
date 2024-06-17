@@ -13,6 +13,7 @@ Edval Timetable is a Python CLI application designed to seamlessly retrieve your
   - `[UP ARROW]`: Quickly jump to the current date's timetable.
   - `[DELETE]`: Change your Edval webcode as needed.
   - `[ENTER]` / `[ESC]`: Exit the application.
+  - `[DOWN ARROW]`: Open edval-timetable GitHub Repository
 - **Automatic Library Installation:** The app automatically installs all required libraries upon first launch, ensuring a smooth setup process.
 - **Configuration File:** Your Edval webcode is securely stored in a `config.ini` file located in `AppData/Roaming/Edval Timetable`, ensuring easy access and management.
 - **Clear Input Handling:** The application ignores unintended key presses, allowing for a focused and streamlined user experience.
@@ -30,6 +31,7 @@ Run the application or type in the "edval" command in your terminal of choice an
 - `[UP ARROW]`: Jump to Current day
 - `[DELETE]`: Change webcode
 - `[ENTER]` / `[ESC]`: Exit
+- `[DOWN ARROW]`: Open edval-timetable GitHub Repository
 
 ## Note on Compatibility
 
